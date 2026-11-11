@@ -1,9 +1,9 @@
 # Deploying LiM-iMa
 
-The app already has a local JSON database at `.data/blog-data.json`. For an
-online deployment, `render.yaml` configures a Render web service and mounts a
-persistent disk at `/var/data`, so database changes survive service restarts.
-The Render service and persistent disk may incur monthly charges.
+The app stores data in `.data/blog-data.json`. The Render Blueprint uses a free
+web service with no persistent disk, so the service may sleep when idle and
+database changes can be lost when the service restarts, redeploys, or its
+filesystem is replaced. Do not use this setup for data you need to keep.
 
 ## Deploy to Render
 
@@ -15,9 +15,11 @@ The Render service and persistent disk may incur monthly charges.
    supplies the port automatically; the app listens on it.
 4. Open the service URL shown by Render.
 
-The deployed disk starts with a new, empty database and creates the `admin`
+The deployed service starts with a new, empty database and creates the `admin`
 account using `ADMIN_PASSWORD`. Existing local posts and accounts in
-`.data/blog-data.json` are not copied to the hosted service.
+`.data/blog-data.json` are not copied to the hosted service. Because this free
+setup has no persistent disk, hosted posts, accounts, and sessions may be lost
+after a restart or redeploy.
 
 For local development, `npm start` starts the server without nodemon;
 `npm run dev` remains available for automatic restarts while editing.

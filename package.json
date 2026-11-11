@@ -1,0 +1,23 @@
+{
+  "name": "lim-ima",
+  "version": "1.0.0",
+  "description": "LiM-iMa blog app",
+  "main": "module.js",
+  "scripts": {
+    "dev": "nodemon module.js",
+    "start": "node module.js",
+    "build:pages": "node scripts/build-pages.js"
+  },
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "ejs": "^7.0.2",
+    "express": "^4.22.3"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}

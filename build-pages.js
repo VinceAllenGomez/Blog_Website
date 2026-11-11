@@ -1,19 +1,21 @@
 const fs = require('fs');
 const path = require('path');
 
-const apiBaseUrl = process.env.API_BASE_URL;
-if (!apiBaseUrl) {
-  throw new Error('Set API_BASE_URL to the deployed HTTPS API origin before building GitHub Pages.');
-}
-
-let parsedApiUrl;
-try {
-  parsedApiUrl = new URL(apiBaseUrl);
-} catch {
-  throw new Error('API_BASE_URL must be a valid HTTPS URL.');
-}
-if (parsedApiUrl.protocol !== 'https:' || parsedApiUrl.search || parsedApiUrl.hash) {
-  throw new Error('API_BASE_URL must use HTTPS and must not include a query string or fragment.');
+const apiBaseUrl = process.env.API_BASE_URL?.trim() || '';
+let normalizedApiBaseUrl = '';
+if (apiBaseUrl) {
+  let parsedApiUrl;
+  try {
+    parsedApiUrl = new URL(apiBaseUrl);
+  } catch {
+    throw new Error('API_BASE_URL must be a valid HTTPS URL.');
+  }
+  if (parsedApiUrl.protocol !== 'https:' || parsedApiUrl.search || parsedApiUrl.hash) {
+    throw new Error('API_BASE_URL must use HTTPS and must not include a query string or fragment.');
+  }
+  normalizedApiBaseUrl = parsedApiUrl.origin + parsedApiUrl.pathname.replace(/\/+$/, '');
+} else {
+  console.warn('API_BASE_URL is not set; the static pages will build without API features.');
 }
 
 const root = __dirname;
@@ -39,6 +41,6 @@ for (const asset of ['app.js', 'styles.css']) {
   fs.copyFileSync(path.join(root, asset), path.join(outputDirectory, asset));
 }
 
-const config = `window.LIMIMA_CONFIG = ${JSON.stringify({ apiBaseUrl: parsedApiUrl.origin + parsedApiUrl.pathname.replace(/\/+$/, '') })};\n`;
+const config = `window.LIMIMA_CONFIG = ${JSON.stringify({ apiBaseUrl: normalizedApiBaseUrl })};\n`;
 fs.writeFileSync(path.join(outputDirectory, 'pages-config.js'), config);
 console.log(`Built GitHub Pages site in ${outputDirectory}`);

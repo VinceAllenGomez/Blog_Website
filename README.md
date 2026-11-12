@@ -1,0 +1,1 @@
+API used: Free Dictionary API
